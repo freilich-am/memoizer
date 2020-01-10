@@ -1,7 +1,7 @@
 class Memoizer<T> {
-    recentCount: number;
-    recentVals: {[input: string]: T};
-    olderVals: {[input: string]: T};
+    private recentCount: number;
+    private recentVals: {[input: string]: T};
+    private olderVals: {[input: string]: T};
     run: (x: string) => T;
     constructor(nonMemoizedFunction: (x: string, recurse: (x: string) => T) => T) {
         this.recentCount = 0;
@@ -11,10 +11,8 @@ class Memoizer<T> {
             const foundRecentVal = this.recentVals[x];
             const foundOlderVal = this.olderVals[x];
             if (foundRecentVal !== undefined) {
-                console.log('found recent', x, foundRecentVal);
                 return foundRecentVal;
             } else if (foundOlderVal !== undefined) {
-                console.log('found old', x, foundOlderVal);
                 this.recentVals[x] = foundOlderVal;
                 this.recentCount++;
                 this.checkOlderValues();
@@ -31,7 +29,6 @@ class Memoizer<T> {
 
     checkOlderValues() {
         if (this.recentCount >= 100) {
-            console.log('doing');
             this.olderVals = this.recentVals;
             this.recentVals = {};
             this.recentCount = 0;
@@ -46,6 +43,8 @@ const fibonacci = (x: string, recurse: ((x: string) => number)): number => {
     return (recurse(`${num - 1}`) + recurse(`${num - 2}`));
 }
 
+const memoizedFib = new Memoizer(fibonacci);
+
 // Not recursing with a memoized version messes this up and makes it slow
 // const fibonacci2 = (x: string): number => {
 //     console.log(x, 'hey');
@@ -55,16 +54,15 @@ const fibonacci = (x: string, recurse: ((x: string) => number)): number => {
 //     return (fibonacci2(`${num - 1}`) + fibonacci2(`${num - 2}`));
 // }
 
-const memoizedFib = new Memoizer(fibonacci);
-console.log(memoizedFib.run(`1`));
-console.log(memoizedFib.run(`2`));
-console.log(memoizedFib.run(`4`));
-console.log(memoizedFib.run(`6`));
-console.log(memoizedFib.run(`10`));
-console.log(memoizedFib.run(`20`));
-console.log(memoizedFib.run(`30`));
-console.log(memoizedFib.run(`300`));
-console.log(memoizedFib.run(`3000`));
+// console.log(memoizedFib.run(`1`));
+// console.log(memoizedFib.run(`2`));
+// console.log(memoizedFib.run(`4`));
+// console.log(memoizedFib.run(`6`));
+// console.log(memoizedFib.run(`10`));
+// console.log(memoizedFib.run(`20`));
+// console.log(memoizedFib.run(`30`));
+// console.log(memoizedFib.run(`300`));
+// console.log(memoizedFib.run(`3000`));
 
 // const memoizedFib2 = new Memoizer(fibonacci2);
 // console.log(memoizedFib2.run(`1`));
